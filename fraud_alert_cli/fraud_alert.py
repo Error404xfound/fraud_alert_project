@@ -1,6 +1,7 @@
 """CLI tool to flag suspicious transactions using rule and z-score checks."""
 
 import statistics
+import matplotlib.pyplot as plt
 from utils import get_input, progress_bar
 
 
@@ -13,11 +14,35 @@ def check_rule_based(amount):
     """Hard threshold check for obviously high transaction values."""
     return amount > RULE_THRESHOLD
 
+def show_graph(transactions, alerted_details):
+    """Generate a scatter plot of transactions with alerts highlighted."""
+    plt.figure(figsize=(10, 5))
+    
+    # Plot all transactions as blue dots
+    indices = list(range(1, len(transactions) + 1))
+    plt.scatter(indices, transactions, color='blue', label='Normal')
+
+    # Highlight suspicious ones in red
+    if alerted_details:
+        alert_indices = [item[0] for item in alerted_details]
+        alert_amounts = [item[1] for item in alerted_details]
+        plt.scatter(alert_indices, alert_amounts, color='red', label='Suspicious')
+
+    # Add the Rule Threshold line
+    plt.axhline(y=RULE_THRESHOLD, color='orange', linestyle='--', label='Rule Threshold')
+
+    plt.title("Transaction Analysis Overview")
+    plt.xlabel("Transaction Number")
+    plt.ylabel("Amount ($)")
+    plt.legend()
+    plt.grid(True, linestyle=':', alpha=0.6)
+    plt.show()
+
 
 def check_zscore(amount, mean, sigma, threshold):
     """Flag transactions whose z-score exceeds the selected sensitivity."""
     if sigma == 0:
-        return False, None, None
+        return False, None, None # Avoid division by zero if all transactions are identical.
 
     z = (amount - mean) / sigma
     if z > threshold:
@@ -46,7 +71,7 @@ def prompt_transactions(expected_count):
     while True:
         try:
             raw = get_input("\nTransactions: ")
-            transactions = [float(x.strip()) for x in raw.split(",") if x.strip()]
+            transactions = [float(x.strip()) for x in raw.split(",") if x.strip()] # Only include non-empty entries after stripping whitespace.
             if len(transactions) == expected_count:
                 return transactions
             print(f"You entered {len(transactions)} transaction(s). Please enter exactly {expected_count}.")
@@ -79,7 +104,7 @@ def detect_suspicious_transactions(transactions, threshold):
 
         if reasons:
             alerts += 1
-            txn_number = i + 1
+            txn_number = i + 1 # Transaction numbers are 1-indexed for user-friendly reporting.
             alerted_transactions.append(txn_number)
             alerted_details.append((txn_number, transaction, reasons))
 
@@ -136,6 +161,7 @@ def main():
     progress_bar(duration=PROGRESS_DURATION)
 
     alerts, alerted_transactions, alerted_details = detect_suspicious_transactions(transactions, t)
+    show_graph(transactions, alerted_details)
     print_results(alerts, alerted_transactions, alerted_details)
 
 
