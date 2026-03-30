@@ -2,7 +2,7 @@
 
 import statistics
 import matplotlib.pyplot as plt
-from utils import get_input, progress_bar
+from utils import progress_bar, prompt_positive_value, prompt_transactions
 
 
 RULE_THRESHOLD = 1000.00
@@ -57,43 +57,6 @@ def check_zscore(amount, median, mad, threshold):
 
     return False, z, None
 
-
-def prompt_positive_value(prompt, cast_type, invalid_type_message):
-    """Prompt until a positive numeric value is provided."""
-    while True:
-        try:
-            value = cast_type(get_input(prompt))
-            if value > 0:
-                return value
-            print("Please enter a number greater than 0.")
-        except ValueError:
-            print(invalid_type_message)
-
-
-def prompt_transactions(expected_count):
-    """Prompt until the exact expected number of transaction values is entered."""
-    print(f"\nEnter {expected_count} transaction amounts, separated by commas.")
-    print("Example: 100.00, 200.50, 3000.00, 150.00, 175.00")
-
-    while True:
-        try:
-            raw = get_input("\nTransactions: ")
-            transactions = [float(x.strip()) for x in raw.split(",") if x.strip()] # Only include non-empty entries after stripping whitespace.
-
-            if any(x <= 0 for x in transactions):
-                print("All transaction amounts must be greater than 0. Please try again.")
-                continue
-
-            if len(transactions) == expected_count:
-                return transactions
-            print(f"You entered {len(transactions)} transaction(s). Please enter exactly {expected_count}.")
-        except ValueError:
-            print(
-                "Some values were invalid. Please use numbers separated by commas "
-                "(e.g. 100, 200, 300)."
-            )
-
-
 def detect_suspicious_transactions(transactions, threshold):
     """Run the detection rules and return alert totals and details."""
     alerts = 0
@@ -122,7 +85,6 @@ def detect_suspicious_transactions(transactions, threshold):
             alerted_details.append((txn_number, transaction, reasons))
 
     return alerts, alerted_transactions, alerted_details, overall_median, overall_mad
-
 
 def print_results(alerts, alerted_transactions, alerted_details):
     """Print the final report in the existing terminal UI format."""
@@ -162,7 +124,7 @@ def main():
 
     t = prompt_positive_value(
         "\nHow sensitive should the alert be? "
-        "(Recommended: 3.0 - higher means fewer alerts)\n"
+        "(Recommended: 3.5 for strict, 10.0+ for massive spikes)\n"
         "(Enter a number greater than 0) : ",
         float,
         "Please enter a number (e.g. 3.5).",
