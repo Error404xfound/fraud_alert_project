@@ -12,6 +12,11 @@ dependencies = [
     "matplotlib",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "mypy",
+]
+
 [project.scripts]
 fraud-alert = "fraud_alert_cli.fraud_alert:main"
 

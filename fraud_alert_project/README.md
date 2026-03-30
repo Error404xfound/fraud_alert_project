@@ -12,8 +12,10 @@ A Python command-line tool that checks transaction amounts and flags suspicious 
 - Transaction overview graph with highlighted suspicious points
 
 ## Project Structure
-- `fraud_alert.py` main CLI app and detection flow
-- `utils.py` shared input and terminal progress helpers
+- `fraud_alert_cli/fraud_alert.py` main CLI app and detection flow
+- `fraud_alert_cli/utils.py` shared input and terminal progress helpers
+- `tests/test_fraud_alert.py` tests for fraud detection and CLI orchestration
+- `tests/test_utils.py` tests for shared input and helper utilities
 
 ## Installation
 
@@ -32,7 +34,7 @@ fraud-alert
 3. Fallback (original direct script run):
 
 ```bash
-python fraud_alert.py
+python fraud_alert_cli/fraud_alert.py
 ```
 
 ## Example Input
@@ -74,6 +76,12 @@ Or run with verbose output:
 pytest -v
 ```
 
+### Type checking
+
+```bash
+mypy fraud_alert_cli/
+```
+
 ### Test Coverage
 
 - **48 unit tests** total across both suites:
@@ -101,7 +109,7 @@ All tests use mocking/monkeypatching where appropriate to avoid flaky I/O, timin
 If you are committing this project from a larger workspace, stage only this folder so the commit stays clean:
 
 ```bash
-git add fraud_alert_cli
+git add fraud_alert_project
 ```
 
 ## Side Note
