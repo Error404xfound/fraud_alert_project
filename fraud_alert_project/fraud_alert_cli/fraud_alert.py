@@ -12,6 +12,7 @@ from fraud_alert_cli.utils import (
 RULE_THRESHOLD = 1000.00
 WELCOME_BANNER_WIDTH = 60
 PROGRESS_DURATION = 1.6
+Z_SCORE_SCALING_FACTOR = 0.6745
 
 
 def check_rule_based(amount: int | float) -> bool:
@@ -51,7 +52,7 @@ def threshold_to_zscore(threshold: int | float, overall_median: float, overall_m
     if overall_mad == 0:
         return overall_median + threshold # If no variability, just add the threshold to the median.
     
-    threshold_amount = overall_median + ((threshold * overall_mad) / 0.6745)
+    threshold_amount = overall_median + ((threshold * overall_mad) / Z_SCORE_SCALING_FACTOR)
     return threshold_amount 
     
 def check_zscore(
@@ -63,7 +64,7 @@ def check_zscore(
     """Flag transactions whose z-score exceeds the selected sensitivity."""
     if mad == 0:
         return False, None, None 
-    z = (0.6745 * (amount - median)) / mad
+    z = (Z_SCORE_SCALING_FACTOR * (amount - median)) / mad
 
     if z > threshold:
         return True, z, f"Z-score={z:.2f} > threshold={threshold:.2f}"
@@ -142,7 +143,7 @@ def main() -> None:
         "Please enter a whole number (e.g. 5).",
     )
 
-    t = prompt_positive_value(
+    s = prompt_positive_value(
         "\nHow sensitive should the alert be? "
         "(Recommended: 3.5 for strict, 10.0+ for massive spikes)\n"
         "(Enter a number greater than 0) : ",
@@ -155,8 +156,8 @@ def main() -> None:
     print()
     progress_bar(duration=PROGRESS_DURATION)
 
-    alerts, alerted_transactions, alerted_details, overall_median, overall_mad = detect_suspicious_transactions(transactions, t)
-    threshold_amount = threshold_to_zscore(t, overall_median, overall_mad)
+    alerts, alerted_transactions, alerted_details, overall_median, overall_mad = detect_suspicious_transactions(transactions, s)
+    threshold_amount = threshold_to_zscore(s, overall_median, overall_mad)
     print_results(alerts, alerted_transactions, alerted_details)
     show_graph(transactions, alerted_details, threshold_amount)
 
