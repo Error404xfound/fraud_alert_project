@@ -9,6 +9,7 @@ A Python command-line tool that checks transaction amounts and flags suspicious 
 - Input validation for transaction count, sensitivity, and amount list
 - Animated progress bar for analysis
 - Clear summary of flagged transactions and reasons
+- Transaction overview graph with highlighted suspicious points
 
 ## Project Structure
 - `fraud_alert.py` main CLI app and detection flow
@@ -16,6 +17,13 @@ A Python command-line tool that checks transaction amounts and flags suspicious 
 
 ## Requirements
 - Python 3.10+
+
+## Dependencies
+Install plotting support before running the app:
+
+```bash
+pip install matplotlib
+```
 
 ## Run Locally
 1. Open a terminal in this folder.
@@ -30,11 +38,15 @@ python fraud_alert.py
 How many transactions do you want to check?
 (Enter a number greater than 0) : 5
 
-How sensitive should the alert be? (Recommended: 3.0 - higher means fewer alerts)
-(Enter a number greater than 0) : 2.5
+How sensitive should the alert be? (Recommended: 3.5 for strict, 10.0+ for massive spikes)
+(Enter a number greater than 0) : 3.5
 
 Transactions: 100, 120, 140, 2200, 150
 ```
+
+## Notes
+- The app prints a terminal summary and then opens a matplotlib chart window.
+- Alerts are produced by a fixed amount rule and a robust z-score check.
 
 ## Commit Scope Suggestion
 If you are committing this project from a larger workspace, stage only this folder so the commit stays clean:
