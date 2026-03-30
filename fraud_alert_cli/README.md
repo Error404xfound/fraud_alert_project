@@ -44,6 +44,30 @@ How sensitive should the alert be? (Recommended: 3.5 for strict, 10.0+ for massi
 Transactions: 100, 120, 140, 2200, 150
 ```
 
+## Testing
+
+Run the test suite to verify all utility functions work correctly:
+
+```bash
+pytest tests/test_utils.py
+```
+
+Or run with verbose output:
+
+```bash
+pytest tests/test_utils.py -v
+```
+
+### Test Coverage
+
+- **27 unit tests** covering:
+  - `get_input()`: input capture, Ctrl+C handling, whitespace normalization
+  - `progress_bar()`: output rendering, sleep behavior, edge cases
+  - `prompt_positive_value()`: type coercion, validation retry loops
+  - `prompt_transactions()`: list parsing, validation, count checking
+
+All tests use mocking to avoid I/O dependencies and timing flakiness.
+
 ## Notes
 - The app prints a terminal summary and then opens a matplotlib chart window.
 - Alerts are produced by a fixed amount rule and a robust z-score check.
