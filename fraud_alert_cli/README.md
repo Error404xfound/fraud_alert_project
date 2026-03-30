@@ -46,27 +46,48 @@ Transactions: 100, 120, 140, 2200, 150
 
 ## Testing
 
-Run the test suite to verify all utility functions work correctly:
+Run the fraud-alert test suite:
+
+```bash
+pytest tests/test_fraud_alert.py
+```
+
+Run the utility test suite:
 
 ```bash
 pytest tests/test_utils.py
 ```
 
+Run all tests:
+
+```bash
+pytest
+```
+
 Or run with verbose output:
 
 ```bash
-pytest tests/test_utils.py -v
+pytest -v
 ```
 
 ### Test Coverage
 
-- **27 unit tests** covering:
+- **48 unit tests** total across both suites:
+  - **21 tests** in `tests/test_fraud_alert.py` covering:
+    - `check_rule_based()`: boundary and type-input behavior
+    - `threshold_to_zscore()`: formula and zero-MAD behavior
+    - `check_zscore()`: below/at/above-threshold and zero-MAD behavior
+    - `detect_suspicious_transactions()`: no alerts, rule-only, z-score-only, zero-MAD, and indexing
+    - `print_results()`: alert/no-alert output contracts
+    - `show_graph()`: plotting call behavior via monkeypatch mocks
+    - `main()`: orchestration flow with dependency stubs
+  - **27 tests** in `tests/test_utils.py` covering:
   - `get_input()`: input capture, Ctrl+C handling, whitespace normalization
   - `progress_bar()`: output rendering, sleep behavior, edge cases
   - `prompt_positive_value()`: type coercion, validation retry loops
   - `prompt_transactions()`: list parsing, validation, count checking
 
-All tests use mocking to avoid I/O dependencies and timing flakiness.
+All tests use mocking/monkeypatching where appropriate to avoid flaky I/O, timing, and GUI dependencies.
 
 ## Notes
 - The app prints a terminal summary and then opens a matplotlib chart window.
