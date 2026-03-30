@@ -2,7 +2,11 @@
 
 import statistics
 import matplotlib.pyplot as plt
-from utils import progress_bar, prompt_positive_value, prompt_transactions
+from utils import ( 
+    progress_bar, 
+    prompt_positive_value, 
+    prompt_transactions
+)
 
 
 RULE_THRESHOLD = 1000.00

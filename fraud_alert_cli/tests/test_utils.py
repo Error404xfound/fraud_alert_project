@@ -1,6 +1,10 @@
 import pytest
-
-from utils import get_input, progress_bar, prompt_positive_value, prompt_transactions
+from utils import (
+    get_input, 
+    progress_bar,
+    prompt_positive_value,
+    prompt_transactions
+)
 
 # Test cases for get_input
 def test_get_input(monkeypatch):
